@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Cancel Booking - IGNITE{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 500px;">
+    <h2 style="text-align: center; margin-bottom: 2rem;">Cancel Booking</h2>
+    
+    <div class="booking-summary" style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+        <h3>{{ booking.title }}</h3>
+        <p><strong>Room:</strong> {{ booking.room.name }}</p>
+        <p><strong>Date:</strong> {{ booking.date }}</p>
+        <p><strong>Time:</strong> {{ booking.start_time }} - {{ booking.end_time }}</p>
+        <p><strong>Participants:</strong> {{ booking.registered_strength }}/{{ booking.estimated_strength }}</p>
+    </div>
+    
+    <p style="color: #dc3545; margin-bottom: 1rem;">Are you sure you want to cancel this booking? This action cannot be undone.</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-danger" style="flex: 1;">Yes, Cancel Booking</button>
+            <a href="{% url 'lhtc:booking_list' %}" class="btn btn-secondary" style="flex: 1; text-align: center;">No, Go Back</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

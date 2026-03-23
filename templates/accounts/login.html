@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Login - IGNITE{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 style="text-align: center; margin-bottom: 2rem;">Welcome Back!</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+    </form>
+    <div style="text-align: center; margin-top: 1rem;">
+        <a href="{% url 'accounts:forgot_password' %}">Forgot Password?</a>
+        <span style="margin: 0 10px">|</span>
+        <a href="{% url 'accounts:register' %}">Create Account</a>
+    </div>
+</div>
+{% endblock %}

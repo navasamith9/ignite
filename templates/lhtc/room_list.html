@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Rooms - IGNITE{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Available Rooms</h1>
+    <div class="filter-section">
+        <form method="GET" class="filter-form">
+            <select name="type" class="form-control">
+                <option value="">All Types</option>
+                {% for type in room_types %}
+                <option value="{{ type.0 }}" {% if filters.type == type.0 %}selected{% endif %}>{{ type.1 }}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="min_capacity" placeholder="Min Capacity" class="form-control" value="{{ filters.min_capacity }}">
+            <input type="checkbox" name="projector" id="projector" {% if filters.projector %}checked{% endif %}>
+            <label for="projector">Projector</label>
+            <input type="checkbox" name="ac" id="ac" {% if filters.ac %}checked{% endif %}>
+            <label for="ac">AC</label>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+</div>
+
+<div class="rooms-grid">
+    {% for room in rooms %}
+    <div class="room-card">
+        <div class="room-card-header">
+            <h3>{{ room.name }}</h3>
+            <p>{{ room.room_number }}</p>
+        </div>
+        <div class="room-card-body">
+            <p><strong>Capacity:</strong> {{ room.capacity }} seats</p>
+            <p><strong>Building:</strong> {{ room.building }}, Floor {{ room.floor }}</p>
+            <div class="room-features">
+                {% if room.has_projector %}
+                <span class="feature-badge">📽️ Projector</span>
+                {% endif %}
+                {% if room.has_ac %}
+                <span class="feature-badge">❄️ AC</span>
+                {% endif %}
+                {% if room.has_whiteboard %}
+                <span class="feature-badge">📝 Whiteboard</span>
+                {% endif %}
+                {% if room.has_wifi %}
+                <span class="feature-badge">📶 WiFi</span>
+                {% endif %}
+            </div>
+            <a href="{% url 'lhtc:create_booking' %}?room={{ room.id }}" class="btn btn-primary" style="margin-top: 1rem;">Book This Room</a>
+        </div>
+    </div>
+    {% empty %}
+    <p>No rooms available.</p>
+    {% endfor %}
+</div>
+{% endblock %}

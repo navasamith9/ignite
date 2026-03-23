@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Bus Routes - IGNITE{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Bus Routes</h1>
+</div>
+
+<div class="filter-section">
+    <form method="GET" class="filter-form">
+        <select name="type" class="form-control">
+            <option value="">All Routes</option>
+            {% for type_code, type_name in route_types %}
+            <option value="{{ type_code }}" {% if request.GET.type == type_code %}selected{% endif %}>{{ type_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="date" name="date" class="form-control" min="{{ today|date:'Y-m-d' }}" value="{{ request.GET.date }}">
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<div class="routes-list">
+    <h2>🚌 College to City</h2>
+    {% for route in routes %}
+        {% if route.route_type == 'college_to_city' %}
+        <div class="route-card" data-available="{{ route.available_seats }}" data-total="{{ route.total_seats }}">
+            <div class="route-info">
+                <h3>{{ route.name }}</h3>
+                <p>🕐 Departure: {{ route.departure_time|time:"H:i" }} | Arrival: {{ route.arrival_time|time:"H:i" }}</p>
+                <p>💰 Fare: ₹{{ route.fare }} | 🪑 Available Seats: <span class="available-seats">{{ route.available_seats }}</span>/<span class="total-seats">{{ route.total_seats }}</span></p>
+                <div class="seats-progress">
+                    <div class="progress-bar" style="width: 0%;"></div>
+                </div>
+                <small><span class="available-seats-text">{{ route.available_seats }}</span> seats available out of <span class="total-seats-text">{{ route.total_seats }}</span></small>
+            </div>
+            <div class="route-action">
+                {% if route.available_seats > 0 %}
+                <a href="{% url 'bus:book_ticket' route.id %}" class="btn btn-primary">Book Now</a>
+                {% else %}
+                <button class="btn btn-secondary" disabled>Sold Out</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+    
+    <h2>🏙️ City to College</h2>
+    {% for route in routes %}
+        {% if route.route_type == 'city_to_college' %}
+        <div class="route-card" data-available="{{ route.available_seats }}" data-total="{{ route.total_seats }}">
+            <div class="route-info">
+                <h3>{{ route.name }}</h3>
+                <p>🕐 Departure: {{ route.departure_time|time:"H:i" }} | Arrival: {{ route.arrival_time|time:"H:i" }}</p>
+                <p>💰 Fare: ₹{{ route.fare }} | 🪑 Available Seats: <span class="available-seats">{{ route.available_seats }}</span>/<span class="total-seats">{{ route.total_seats }}</span></p>
+                <div class="seats-progress">
+                    <div class="progress-bar" style="width: 0%;"></div>
+                </div>
+                <small><span class="available-seats-text">{{ route.available_seats }}</span> seats available out of <span class="total-seats-text">{{ route.total_seats }}</span></small>
+            </div>
+            <div class="route-action">
+                {% if route.available_seats > 0 %}
+                <a href="{% url 'bus:book_ticket' route.id %}" class="btn btn-primary">Book Now</a>
+                {% else %}
+                <button class="btn btn-secondary" disabled>Sold Out</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    {% empty %}
+    <div class="no-routes">
+        <p>No bus routes available at the moment.</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    // Calculate and set progress bar widths
+    document.addEventListener('DOMContentLoaded', function() {
+        const routeCards = document.querySelectorAll('.route-card');
+        
+        routeCards.forEach(card => {
+            const available = parseInt(card.dataset.available);
+            const total = parseInt(card.dataset.total);
+            
+            if (total > 0) {
+                const percentage = (available / total) * 100;
+                const progressBar = card.querySelector('.progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = percentage + '%';
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

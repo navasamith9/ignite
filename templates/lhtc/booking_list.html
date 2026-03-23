@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}My Bookings - IGNITE{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Bookings</h1>
+    {% if is_teacher %}
+    <a href="{% url 'lhtc:create_booking' %}" class="btn btn-primary">+ New Booking</a>
+    {% endif %}
+</div>
+
+<div class="filter-section">
+    <form method="GET" class="filter-form">
+        <select name="status" class="form-control">
+            <option value="">All Status</option>
+            {% for status in status_choices %}
+            <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<div class="bookings-list">
+    {% for booking in bookings %}
+    <div class="booking-card">
+        <div class="booking-header">
+            <h3>{{ booking.title }}</h3>
+            <span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span>
+        </div>
+        <div class="booking-details">
+            <p><strong>Room:</strong> {{ booking.room.name }}</p>
+            <p><strong>Date:</strong> {{ booking.date }}</p>
+            <p><strong>Time:</strong> {{ booking.start_time }} - {{ booking.end_time }}</p>
+            <p><strong>Purpose:</strong> {{ booking.get_purpose_display }}</p>
+            <p><strong>Participants:</strong> {{ booking.registered_strength }}/{{ booking.estimated_strength }}</p>
+        </div>
+        
+        <div class="booking-actions">
+            {% if is_teacher and booking.status == 'confirmed' and booking.date >= today %}
+            <a href="{% url 'lhtc:edit_booking' booking.id %}" class="btn btn-secondary">Edit</a>
+            <a href="{% url 'lhtc:cancel_booking' booking.id %}" class="btn btn-danger">Cancel</a>
+            {% endif %}
+            
+            {% if not is_teacher and booking.status == 'confirmed' and booking.registration_deadline > now %}
+            <a href="{% url 'lhtc:register_event' booking.id %}" class="btn btn-primary">Register</a>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <p>No bookings found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

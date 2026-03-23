@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}{% if type == 'lost' %}Lost Item{% else %}Found Item{% endif %} - IGNITE{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 800px;">
+    <div class="item-detail">
+        <h2 style="text-align: center; margin-bottom: 2rem;">
+            {% if type == 'lost' %}🔍 Lost Item Details{% else %}🎯 Found Item Details{% endif %}
+        </h2>
+        
+        <div class="item-detail-content">
+            {% if item.image %}
+            <div class="item-detail-image" style="text-align: center; margin-bottom: 2rem;">
+                <img src="{{ item.image.url }}" alt="{{ item.title }}" style="max-width: 100%; max-height: 400px; border-radius: 10px;">
+            </div>
+            {% endif %}
+            
+            <div class="item-detail-info">
+                <h3>{{ item.title }}</h3>
+                <p><strong>Description:</strong> {{ item.description }}</p>
+                <p><strong>Category:</strong> {{ item.get_category_display }}</p>
+                <p><strong>Location:</strong> {{ item.location }}</p>
+                <p><strong>Date {% if type == 'lost' %}Lost{% else %}Found{% endif %}:</strong> {{ item.date_lost|default:item.date_found }}</p>
+                <p><strong>Contact Phone:</strong> {{ item.contact_phone }}</p>
+                <p><strong>Contact Email:</strong> {{ item.contact_email }}</p>
+                <p><strong>Reported by:</strong> {{ item.user.get_full_name|default:item.user.username }}</p>
+                <p><strong>Reported on:</strong> {{ item.created_at|date:"F j, Y, g:i a" }}</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% if type == 'lost' %}{% url 'lostfound:lost_items' %}{% else %}{% url 'lostfound:found_items' %}{% endif %}" 
+               class="btn btn-secondary">
+                ← Back to {% if type == 'lost' %}Lost{% else %}Found{% endif %} Items
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

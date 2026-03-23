@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Found Items - IGNITE{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>🎯 Found Items</h1>
+    <a href="{% url 'lostfound:report_found' %}" class="btn btn-primary">+ Report Found Item</a>
+</div>
+
+<div class="filter-section">
+    <form method="GET" class="filter-form">
+        <input type="text" name="search" placeholder="Search items..." 
+               class="form-control" value="{{ request.GET.search }}">
+        <select name="category" class="form-control">
+            <option value="">All Categories</option>
+            {% for cat_code, cat_name in categories %}
+            <option value="{{ cat_code }}" {% if request.GET.category == cat_code %}selected{% endif %}>{{ cat_name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+<div class="items-grid">
+    {% for item in items %}
+    <div class="item-card">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="item-image">
+        {% else %}
+        <div class="item-image placeholder">
+            <span>📦 No Image</span>
+        </div>
+        {% endif %}
+        <div class="item-details">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description|truncatechars:100 }}</p>
+            <p><strong>📍 Location:</strong> {{ item.location }}</p>
+            <p><strong>📅 Date Found:</strong> {{ item.date_found }}</p>
+            <span class="item-category">{{ item.get_category_display }}</span>
+            <div class="contact-info">
+                <p><strong>📞 Contact:</strong> {{ item.contact_phone }}</p>
+                <p><strong>📧 Email:</strong> {{ item.contact_email }}</p>
+            </div>
+            <small>Reported by: {{ item.user.get_full_name|default:item.user.username }}</small>
+        </div>
+    </div>
+    {% empty %}
+    <div class="no-results">
+        <h3>No found items reported</h3>
+        <p>Be the first to report a found item.</p>
+        <a href="{% url 'lostfound:report_found' %}" class="btn btn-primary">Report Found Item</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

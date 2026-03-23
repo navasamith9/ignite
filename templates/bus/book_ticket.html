@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Book Ticket - IGNITE{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 500px;">
+    <h2 style="text-align: center; margin-bottom: 2rem;">Book Bus Ticket</h2>
+    
+    <div class="route-summary">
+        <h3>{{ route.name }}</h3>
+        <p>Departure: {{ route.departure_time|time:"H:i" }} | Fare: ₹{{ route.fare }}</p>
+        <p>Available Seats: {{ route.available_seats }}/{{ route.total_seats }}</p>
+    </div>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_travel_date">Travel Date</label>
+            {{ form.travel_date }}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_num_tickets">Number of Tickets (Max {{ max_tickets }})</label>
+            {{ form.num_tickets }}
+            <small>You can book up to 2 tickets at a time</small>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Proceed to Book</button>
+    </form>
+    
+    <div style="text-align: center; margin-top: 1rem;">
+        <a href="{% url 'bus:bus_list' %}">Back to Routes</a>
+    </div>
+</div>
+{% endblock %}

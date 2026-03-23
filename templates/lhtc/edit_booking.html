@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Edit Booking - IGNITE{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 800px;">
+    <h2 style="text-align: center; margin-bottom: 2rem;">Edit Booking</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_room">Select Room</label>
+                {{ form.room }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_purpose">Purpose</label>
+                {{ form.purpose }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_title">Event Title</label>
+            {{ form.title }}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_description">Description</label>
+            {{ form.description }}
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_date">Date</label>
+                {{ form.date }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_start_time">Start Time</label>
+                {{ form.start_time }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_end_time">End Time</label>
+                {{ form.end_time }}
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="id_estimated_strength">Estimated Strength</label>
+                {{ form.estimated_strength }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_year_batch">Year Batch</label>
+                {{ form.year_batch }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_branches">Branches (comma separated)</label>
+                {{ form.branches }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="id_registration_deadline">Registration Deadline</label>
+            {{ form.registration_deadline }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Update Booking</button>
+    </form>
+</div>
+{% endblock %}

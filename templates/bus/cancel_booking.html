@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Cancel Booking - IGNITE{% endblock %}
+
+{% block content %}
+<div class="form-container" style="max-width: 500px;">
+    <h2 style="text-align: center; margin-bottom: 2rem;">Cancel Bus Booking</h2>
+    
+    <div class="booking-summary" style="background: #f8f9fa; padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+        <h3>{{ booking.route.name }}</h3>
+        <p><strong>Travel Date:</strong> {{ booking.travel_date }}</p>
+        <p><strong>Departure:</strong> {{ booking.route.departure_time|time:"H:i" }}</p>
+        <p><strong>Tickets:</strong> {{ booking.num_tickets }}</p>
+        <p><strong>Total Amount:</strong> ₹{{ booking.total_amount }}</p>
+    </div>
+    
+    <p style="color: #dc3545; margin-bottom: 1rem;">Are you sure you want to cancel this booking? Your seats will be made available for others.</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-danger" style="flex: 1;">Yes, Cancel Booking</button>
+            <a href="{% url 'bus:my_bookings' %}" class="btn btn-secondary" style="flex: 1; text-align: center;">No, Go Back</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

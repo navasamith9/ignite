@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}My Bus Bookings - IGNITE{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Bus Bookings</h1>
+</div>
+
+<div class="filter-section">
+    <form method="GET" class="filter-form">
+        <select name="status" class="form-control">
+            <option value="">All Status</option>
+            {% for status in status_choices %}
+            <option value="{{ status.0 }}" {% if request.GET.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+</div>
+
+<div class="bookings-list">
+    {% for booking in bookings %}
+    <div class="ticket-card">
+        <div class="ticket-header">
+            <h3>{{ booking.route.name }}</h3>
+            <span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span>
+        </div>
+        <div class="ticket-body">
+            <div class="ticket-info">
+                <p><strong>Travel Date:</strong> {{ booking.travel_date }}</p>
+                <p><strong>Departure:</strong> {{ booking.route.departure_time|time:"H:i" }}</p>
+                <p><strong>Tickets:</strong> {{ booking.num_tickets }}</p>
+                <p><strong>Total Amount:</strong> ₹{{ booking.total_amount }}</p>
+                <p><strong>Booked On:</strong> {{ booking.booking_date|date:"Y-m-d H:i" }}</p>
+            </div>
+            {% if booking.qr_code %}
+            <div class="qr-code">
+                <img src="data:image/png;base64,{{ booking.qr_code }}" alt="QR Code" style="width: 100px; height: 100px;">
+            </div>
+            {% endif %}
+        </div>
+        {% if booking.status == 'confirmed' and booking.travel_date >= today %}
+        <div class="ticket-footer">
+            <a href="{% url 'bus:cancel_booking' booking.id %}" class="btn btn-danger">Cancel Booking</a>
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>No bookings found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

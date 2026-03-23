@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}AI Room Recommender - IGNITE{% endblock %}
+
+{% block content %}
+<div class="ai-recommender">
+    <h1 style="text-align: center; margin-bottom: 2rem;">🤖 AI Room Recommendation System</h1>
+    
+    <div class="form-container" style="max-width: 600px; margin-bottom: 2rem;">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label>Estimated Strength <span style="color: red;">*</span></label>
+                <input type="number" name="estimated_strength" class="form-control" required 
+                       value="{{ search_params.strength|default:'' }}" 
+                       placeholder="Enter number of participants"
+                       min="1">
+            </div>
+            
+            <div class="form-group">
+                <label>Purpose <span style="color: red;">*</span></label>
+                <select name="purpose" class="form-control" required>
+                    <option value="">-- Select Purpose --</option>
+                    {% for purpose_code, purpose_name in purpose_choices %}
+                    <option value="{{ purpose_code }}" {% if search_params.purpose == purpose_code %}selected{% endif %}>{{ purpose_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Year Batch</label>
+                <select name="year_batch" class="form-control">
+                    <option value="">All Years</option>
+                    {% for year_code, year_name in year_choices %}
+                    <option value="{{ year_code }}" {% if search_params.year == year_code|stringformat:"s" %}selected{% endif %}>{{ year_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Branches (comma separated)</label>
+                <input type="text" name="branches" class="form-control" 
+                       value="{{ search_params.branches|default:'' }}" 
+                       placeholder="e.g., cse, ece, mech">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" name="date" class="form-control" 
+                           value="{{ search_params.date|default:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label>Start Time</label>
+                    <input type="time" name="start_time" class="form-control" 
+                           value="{{ search_params.start|default:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label>End Time</label>
+                    <input type="time" name="end_time" class="form-control" 
+                           value="{{ search_params.end|default:'' }}">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                🔍 Find Best Rooms
+            </button>
+        </form>
+    </div>
+    
+    {% if recommended_rooms %}
+    <h2 style="margin-bottom: 1rem;">🎯 Recommended Rooms</h2>
+    <div class="recommendations-list">
+        {% for rec in recommended_rooms %}
+        <div class="recommendation-card" data-score="{{ rec.score }}">
+            <div class="room-info">
+                <h3>🏛️ {{ rec.room.name }} ({{ rec.room.room_number }})</h3>
+                <p><strong>📊 Capacity:</strong> {{ rec.capacity_fit }}</p>
+                <p><strong>📍 Location:</strong> {{ rec.room.building }}, Floor {{ rec.room.floor }}</p>
+                
+                <div class="features">
+                    <strong>🔧 Amenities:</strong>
+                    <div class="feature-badges">
+                        {% if rec.room.has_projector %}
+                        <span class="feature-badge">📽️ Projector</span>
+                        {% endif %}
+                        {% if rec.room.has_ac %}
+                        <span class="feature-badge">❄️ AC</span>
+                        {% endif %}
+                        {% if rec.room.has_whiteboard %}
+                        <span class="feature-badge">📝 Whiteboard</span>
+                        {% endif %}
+                        {% if rec.room.has_wifi %}
+                        <span class="feature-badge">📶 WiFi</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="score-container">
+                    <div class="score-label">Match Score: <span class="score-value">{{ rec.score }}%</span></div>
+                    <div class="score-bar">
+                        <div class="score-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+                
+                <div class="reasons">
+                    <strong>✨ Why this room?</strong>
+                    <ul>
+                        {% for reason in rec.reasons %}
+                        <li>✓ {{ reason }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <a href="{% url 'lhtc:create_booking' %}?room={{ rec.room.id }}&strength={{ search_params.strength }}&purpose={{ search_params.purpose }}" 
+                   class="btn btn-primary">
+                    📅 Book This Room
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Set progress bar widths based on score
+    document.addEventListener('DOMContentLoaded', function() {
+        const recommendationCards = document.querySelectorAll('.recommendation-card');
+        
+        recommendationCards.forEach(card => {
+            const score = parseInt(card.dataset.score);
+            const progressBar = card.querySelector('.score-fill');
+            if (progressBar && !isNaN(score)) {
+                // Animate the progress bar
+                setTimeout(function() {
+                    progressBar.style.width = score + '%';
+                }, 100);
+            }
+        });
+    });
+</script>
+{% endblock %}
