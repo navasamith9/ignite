@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ignite Helpdesk</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/helpdesk_script.js' %}"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>Ignite Helpdesk</h1>
+                <p>Local AI Assistant | Connected to IIITDMJ</p>
+            </div>
+            <div class="nav-links">
+                <a href="/">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="chat-container">
+        <div id="chat-history" class="chat-history">
+            <div class="message bot-message">
+                <div class="message-content">
+                    Welcome! I am running securely on your local machine. How can I assist you with IIITDMJ guidelines today?
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-box-wrapper">
+                <textarea id="user-input" placeholder="Ask about guidelines..." rows="1"></textarea>
+                <div class="action-buttons">
+                    <button id="stop-btn" class="icon-btn hidden" title="Stop">
+                    <i class="fa-solid fa-stop"></i>
+                    </button>
+                    <button id="send-btn" class="icon-btn" title="Send message">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{% static 'helpdesk_script.js' %}"></script>
+</body>
+</html>

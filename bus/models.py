@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
+from django.db.models import Sum
 
 User = get_user_model()
 
@@ -23,6 +24,15 @@ class BusRoute(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    def get_available_seats(self, travel_date):
+        booked = self.bookings.filter(
+            travel_date=travel_date,
+            payment_status=True,
+            status='confirmed'
+        ).aggregate(total=Sum('num_tickets'))['total'] or 0
+
+        return self.total_seats - booked
+    
     def __str__(self):
         return f"{self.name} - {self.departure_time} ({self.get_route_type_display()})"
     
@@ -30,7 +40,7 @@ class BusRoute(models.Model):
         if not self.pk:  # New instance
             self.available_seats = self.total_seats
         super().save(*args, **kwargs)
-    
+
     class Meta:
         ordering = ['route_type', 'departure_time']
 
@@ -52,6 +62,7 @@ class BusBooking(models.Model):
     total_amount = models.DecimalField(max_digits=8, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='confirmed')
     qr_code = models.TextField(blank=True, null=True)  # Changed to TextField for base64 data
+    payment_status = models.BooleanField(default=False)
     
     def __str__(self):
         return f"{self.user.username} - {self.route.name} - {self.travel_date}"

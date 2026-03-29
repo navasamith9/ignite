@@ -6,10 +6,17 @@ from django.shortcuts import redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', lambda request: redirect('accounts:login'), name='home'),
+    
+    # 1. Add this line for Google OAuth
+    path('accounts/', include('allauth.urls')), 
+    
+    # 2. Update this to point to the new Google Login URL
+    path('', lambda request: redirect('/accounts/google/login/'), name='home'),
+    
     path('accounts/', include('accounts.urls')),
     path('lhtc/', include('lhtc.urls')),
     path('bus/', include('bus.urls')),
+    path('help/', include('helpdesk.urls')),
     path('lostfound/', include('lostfound.urls')),
 ]
 

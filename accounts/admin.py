@@ -1,19 +1,29 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import User, OTP
+from .models import User
+
+# Remove OTP from imports since it was removed from models.py
+# from .models import OTP 
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'college_email', 'user_type', 'is_verified', 'is_active')
-    list_filter = ('user_type', 'is_verified', 'is_active', 'department')
-    search_fields = ('username', 'college_email', 'phone')
+    # Updated to use 'email' instead of 'college_email' 
+    # and removed 'is_verified' as Google handles verification
+    list_display = ('email', 'username', 'user_type', 'is_staff', 'is_active')
+    list_filter = ('user_type', 'is_staff', 'is_active')
+    search_fields = ('email', 'username')
+    
+    # fieldsets controls the "Change User" page in Admin
     fieldsets = UserAdmin.fieldsets + (
-        ('Additional Info', {'fields': ('user_type', 'college_email', 'is_verified', 
-                                       'phone', 'department', 'year', 'profile_picture')}),
+        ('IGNITE Profile Info', {'fields': ('user_type',)}),
     )
+    
+    # add_fieldsets controls the "Add User" page in Admin
     add_fieldsets = UserAdmin.add_fieldsets + (
-        ('Additional Info', {'fields': ('user_type', 'college_email', 'phone', 
-                                       'department', 'year')}),
+        ('IGNITE Profile Info', {'fields': ('user_type', 'email')}),
     )
 
+# Register only the User model
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(OTP)
+
+# DELETE or COMMENT OUT the OTP registration
+# admin.site.register(OTP)

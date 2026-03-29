@@ -27,6 +27,9 @@
                     {% endif %}
                     <a href="{% url 'bus:bus_list' %}"><i class="fas fa-bus"></i> Bus</a>
                     <a href="{% url 'lostfound:lost_items' %}"><i class="fas fa-search"></i> Lost & Found</a>
+                    <a href="{% url 'helpdesk:chat_page' %}" class="btn btn-primary" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                    <i class="fa-solid fa-comments"></i> Chat with Helpdesk
+                    </a>
                     <a href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     <span class="user-badge"><i class="fas fa-user"></i> {{ user.username }}</span>
                 {% else %}
